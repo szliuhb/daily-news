@@ -1,0 +1,29 @@
+name: 每日科技财经新闻推送
+
+on:
+  # 每天北京时间早上8点运行（UTC时间0点）
+  schedule:
+    - cron: '0 0 * * *'
+  # 允许手动触发
+  workflow_dispatch:
+
+jobs:
+  send-news:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v3
+      
+      - name: 设置Python环境
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      
+      - name: 安装依赖
+        run: |
+          pip install feedparser requests
+      
+      - name: 获取并发送新闻
+        env:
+          SENDKEY: ${{ secrets.SENDKEY }}
+        run: python news_fetcher.py
